@@ -9,7 +9,7 @@ import { fetchMscz, setMscz, MSCZ_URL_SYM } from './mscz'
 import { loadMscore, INDV_DOWNLOADS, WebMscore } from './mscore'
 import { ScoreInfo, ScoreInfoHtml, ScoreInfoObj, getActualId } from './scoreinfo'
 import { getLibreScoreLink } from './librescore-link'
-import { escapeFilename } from './utils'
+import { expandTilde, escapeFilename } from './utils'
 import { isNpx, getVerInfo, getSelfVer } from './npm-data'
 import i18n from './i18n'
 
@@ -177,6 +177,7 @@ void (async () => {
     name: 'dest',
     message: 'Destination Directory:',
     validate (input: string) {
+      input = expandTilde(input)
       return input && fs.statSync(input).isDirectory()
     },
     default: process.cwd(),
@@ -189,7 +190,7 @@ void (async () => {
     filetypes.map(async (d) => {
       const data = await d.action(score)
       const n = `${fileName} - ${escapeFilename(partName)}.${d.fileExt}`
-      const f = path.join(dest, n)
+      const f = path.join(expandTilde(dest), n)
       await fs.promises.writeFile(f, data)
       spinner.info(`Saved ${chalk.underline(f)}`)
       spinner.start()

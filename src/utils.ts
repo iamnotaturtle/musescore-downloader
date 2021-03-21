@@ -1,6 +1,13 @@
-
+import os from 'os'
 import isNodeJs from 'detect-node'
 import { isGmAvailable, _GM } from './gm'
+
+const homeDirectory = os.homedir();
+
+export const expandTilde = (s: string): string => {
+  // See https://github.com/sindresorhus/untildify
+  return s.replace(/^~(?=$|\/|\\)/, homeDirectory);
+};
 
 export const escapeFilename = (s: string): string => {
   return s.replace(/[\s<>:{}"/\\|?*~.\0\cA-\cZ]+/g, '_')
